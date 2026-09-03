@@ -74,4 +74,10 @@ inner join classes_students cs on s.student_id = cs.student_id
 where s.student_id = 1
 order by s.student_id, cs.class_id;
 
+--limit
+select students
+limit 5;
 
+--sample
+select *
+from students sample(50);

@@ -104,3 +104,64 @@ from classes;
 -- In Class
 -- Activity Part 1
 -- Question: Which classes have a maximum capacity of more than 30?
+
+describe table classes;
+select class_id, class_code, class_name, max_capacity
+from classes
+where max_capacity > 30
+order by max_capacity desc;
+
+--Inner Join
+
+select cs.class_id,
+cs.student_id,
+cs.status
+from classes_students cs;
+
+--inner join again with classes table columns
+
+select cs.class_id,
+c.class_code,
+c.class_name,
+cs.student_id,
+cs.status
+from classes_students cs
+inner join classes c on c.class_id = cs.class_id;
+
+--inner join with students
+
+select cs.class_id,
+c.class_code,
+c.class_name,
+s.last_name,
+s.first_name,
+cs.student_id,
+cs.status
+from classes_students cs
+inner join classes c on c.class_id = cs.class_id
+inner join students s on s.student_id = cs.student_id
+where cs.status = 'ENROLLED'
+order by class_id;
+
+-- Arrays, semistructured data, 
+select student_id,
+interests,
+clubs,
+from students;
+
+--arrays start here: interest
+select student_id,
+interests,
+interests[0]::varchar as interests_first,
+interests[1]::varchar as interests_second,
+interests[2]::varchar as interests_third,
+clubs,
+from students;
+
+
+select student_id,
+interests,
+interests[0]::string as interests_first,
+clubs,
+from students;
+
