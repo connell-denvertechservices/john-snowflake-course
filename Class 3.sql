@@ -108,3 +108,62 @@ from (
 )
 group by lineitem_count
 order by lineitem_count;
+
+select c_custkey, 
+c_acctbal,
+c_mktsegment,
+from customer
+limit 5;
+
+--sql min max function
+select min(c_acctbal) as min_account,
+max(c_acctbal),
+avg(c_acctbal)
+from customer;
+
+
+
+--missing value
+select min(c_acctbal) as min_account,
+max(c_acctbal),
+avg(c_acctbal),
+count(*) - count(c_acctbal) as missing_acc_balance
+from customer;
+
+--distinct events
+
+select c_custkey,
+c_mktsegment
+from customer
+limit 5;
+
+select distinct c_mktsegment
+from customer;
+
+select * 
+from customer,
+where c_custkey = 60008;
+
+select count(*),
+from customer,
+where c_mktsegment = 'AUTOMOBILE';
+
+--orders table
+select count(*) 
+from orders,
+where o_orderdate > '1998-08-01';
+
+--between date example
+select *
+from orders 
+where o_orderdate between '1998-07-01' and '1998-08-01'
+limit 5;
+
+--
+select *
+from orders sample (10 rows);
+
+select *
+from orders
+limit 10;
+
