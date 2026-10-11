@@ -5,8 +5,7 @@
 
 
 
-
---CREATE OR REPLACE VIEW db_instructor1.module2.V_CUSTOMER_RFM AS
+CREATE OR REPLACE VIEW db_instructor1.module2.V_CUSTOMER_RFM AS
 WITH customer_metrics AS (
     SELECT 
         c.C_CUSTKEY,
@@ -45,3 +44,34 @@ SELECT
     recency_score || frequency_score || monetary_score AS rfm_segment
 FROM rfm_scores
 limit 10;
+
+select *
+from rfm_scores;
+
+-- Example 1 as CTE: High-frequency customers
+WITH high_frequency AS (
+    SELECT o_custkey, COUNT(*) AS order_count
+    FROM orders
+    GROUP BY o_custkey
+    HAVING COUNT(*) >= 20
+)
+SELECT c.c_name, hf.order_count
+FROM customer c
+INNER JOIN high_frequency hf ON c.c_custkey = hf.o_custkey
+ORDER BY hf.order_count DESC
+LIMIT 10;
+
+--CTE on orders;
+
+with cte as (
+select c.c_mktsegment,
+count(o_orderkey) as orders_count,
+round(avg(o_totalprice),2) as orders_total_avg,
+sum(o_totalprice) as orders_total_sum
+from customer c
+left join orders o on c.c_custkey = o.o_custkey
+group by c.c_mktsegment
+limit 10)
+select orders_count, c_mktsegment
+from cte
+where orders_count > 30000;
