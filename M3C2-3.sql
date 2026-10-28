@@ -127,4 +127,87 @@ select
 from v_works_counts_is_journals
 order by change desc;
 
+--October21
+--Admin Activites create view---
+create or replace veiw v_works_counts_is_journals as
+SELECT
+    source_name,
+    ARRAY_AGG(f.VALUE:works_count) WITHIN GROUP (ORDER BY f.VALUE:year DESC) AS works_counts_by_year_array
+FROM snowflake_public_data_free.public_data_free.openalex_sources_index,
+LATERAL FLATTEN(input => WORKS_COUNTS_BY_YEAR) f
+WHERE source_name IN ('MIS Quarterly', 'Information Systems Research', 'Journal of the Association for Information Systems', 'Journal of Management Information Systems', 'European Journal of Information Systems', 'Decision Support Systems', 'Information & Management', 'Information and Organization', 'Information Systems Journal') and
+    source_type = 'journal'
+GROUP BY source_name;
+
+--viewing view
+select *
+from v_works_counts_is_journals;
+
+--jounranls for how many year
+select *,
+array_size(works_counts_by_year_array) as num_of_years
+from v_works_counts_is_journals;
+order_by num_of_years desc;
+
+--taking the first element
+select *,
+works_counts_by_year_array[1] as works_count_recent_year
+from v_works_counts_is_journals;
+
+--array_slice()
+
+select *,
+works_counts_by_year_array[1] as works_count_recent_year,
+array_slice(works_counts_by_year_array, 0, 3) as recent_3_years
+from v_works_counts_is_journals;
+
+--filter
+
+select source_name, array_agg(f.value) as works_counts_over_100
+from v_works_counts_is_journals v,
+    lateral flatten(input => works_counts_by_year_array) f
+where f.value > 100
+group by source_name;
+
+--lateral flattern
+select *
+from v_works_counts_is_journals v,
+lateral flatten(input => works_counts_by_year_array) f;
+
+--array filter()
+select *,
+filter(works_counts_by_year_array, x -> x > 100) as array_filter_values
+from v_works_counts_is_journals;   
+
+--array size and array filter 
+
+select *,
+filter(works_counts_by_year_array, x -> x > 100) as array_filter_values,
+arrau_size(array_filter_values) as years_more_than_100
+from v_works_counts_is_journals;
+
+--array reduce()
+select *
+reduce(works_counts_by_year_array, 0, (acc, val) -> acc + val as total_works_counts)
+from v_works_counts_is_journals;
+
+select *,
+reduce(works_counts_by_year_array, 0, (acc, val) -> acc + val) as total_works_counts,
+transform(works_counts_by_year_array, x -> round(x / total_works_counts, 2)::number(10, 2)) as total_works_percent
+from v_works_counts_is_journals;
+
+--activitiy for OCt 26
+--how many more or less articles published in 2025 than 2024? 
+select source_name,
+from v_works_counts_is_journals
+where source_name = 'MIS Quarterly';
+
+
+select source_name,
+works_counts_by_year_array[0] as wc_recent_year,
+works_counts_by_year_array[1] as wc_2nd_recent_year,
+wc_recent_year - wc_2nd_recent_year as difference 
+from v_works_counts_is_journals
+where source_name = 'MIS Quarterly';
+
 

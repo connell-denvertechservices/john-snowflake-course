@@ -103,3 +103,35 @@ from openalex_sources_index,
 where source_name = 'MIS Quarterly'
 order by year;
 
+
+--dot notation for JSON---
+select openalex_source_id,
+source_name,
+summary_stats,
+works_counts_by_year
+from openalex_sources_index
+where source_name = 'MIS Quarterly';
+
+--working with summary_stats
+select openalex_source_id,
+source_name,
+summary_stats,
+summary_stats:"2yr_mean_citedness" as tymc,
+summary_stats:h_index as hi,
+summary_stats:i10_index as ii
+from openalex_sources_index
+where source_name in ('MIS Quarterly', 'Information Systems Research', 'Decision Support Systems');
+
+--Bracket Notation---
+
+select openalex_source_id,
+source_name,
+summary_stats,
+summary_stats['2yr_mean_citedness'] as tymc,
+summary_stats['h_index'] as hi,
+summary_stats['i10_index'] as ii
+from openalex_sources_index
+where source_name = 'MIS Quarterly'	;
+
+
+
