@@ -174,3 +174,27 @@ with cte as (
 select *
 from uspto_patents_g06 g06
 inner join cte on cte.patent_id = g06.patent_id;
+
+
+
+--- activity for Noc 11--
+select *
+from information_schema.views
+where table_name ilike 'uspto%';
+
+
+select *
+from uspto_patent_index
+limit 5;
+
+--activity 2
+select *
+from uspto_patent_index
+limit 5;
+
+
+select patent_id,
+invention_title,
+patent_raw_json:"us-bibliographic-data-application"."invention-title"."text"
+from uspto_patent_index
+limit 1;

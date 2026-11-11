@@ -134,4 +134,109 @@ from openalex_sources_index
 where source_name = 'MIS Quarterly'	;
 
 
+--activity for OCT 28
+
+select *
+from openalex_works_index
+where array_size(openalex_author_ids) > 1 
+limit 5;
+
+sekect *
+from openalex_authors_index
+limit 5;
+
+--query for assignment 5
+select table_name, 
+column_name,
+data_type
+from information_schema.columns
+where table_name = 'OPENALEX_AUTHORS_INDEX'
+order by table_name, ordinal_position;
+
+
+--self join
+select * 
+from openalex_concepts_index
+limit 10;
+
+
+---works_count/year
+select openalex_source_id,
+source_name,
+works_counts_by_year
+from openalex_sources_index
+where source_name = 'MIS Quarterly';
+
+--Dot notation
+select openalex_source_id,
+source_name,
+works_counts_by_year,
+works_counts_by_year[0]
+from openalex_sources_index
+where source_name = 'MIS Quarterly';
+
+--extracting elements
+select openalex_source_id,
+source_name,
+works_counts_by_year[0], 
+works_counts_by_year[0]:cited_by_count,
+works_counts_by_year[0]:oa_works_count,
+works_counts_by_year[0]:works_count,
+works_counts_by_year[0]:year,
+from openalex_sources_index
+where source_name = 'MIS Quarterly';
+
+--extracting elements
+select openalex_source_id,
+source_name,
+works_counts_by_year[0], 
+works_counts_by_year[0]:cited_by_count,
+works_counts_by_year[0]:oa_works_count,
+works_counts_by_year[0]:works_count,
+works_counts_by_year[0]:year,
+works_counts_by_year[1], 
+works_counts_by_year[1]:cited_by_count,
+works_counts_by_year[1]:oa_works_count,
+works_counts_by_year[1]:works_count,
+works_counts_by_year[1]:year
+from openalex_sources_index
+where source_name = 'MIS Quarterly';
+
+--Union
+select openalex_source_id,
+source_name,
+works_counts_by_year[0], 
+works_counts_by_year[0]:cited_by_count,
+works_counts_by_year[0]:oa_works_count,
+works_counts_by_year[0]:works_count,
+works_counts_by_year[0]:year
+from openalex_sources_index
+where source_name = 'MIS Quarterly'
+union
+select openalex_source_id,
+source_name,
+works_counts_by_year[1], 
+works_counts_by_year[1]:cited_by_count,
+works_counts_by_year[1]:oa_works_count,
+works_counts_by_year[1]:works_count,
+works_counts_by_year[1]:year
+from openalex_sources_index
+where source_name = 'MIS Quarterly';
+
+
+--leateral flatten 
+select openalex_source_id,
+source_name,
+f.*
+from openalex_sources_index,
+lateral flatten((input => works_counts_by_year) f
+where source_name = 'MIS Quarterly';
+
+select openalex_source_id,
+source_name,
+f.value:works_count,
+f.value:year,
+from openalex_sources_index,
+lateral flatten(input => works_counts_by_year) f
+where source_name = 'MIS Quarterly';
 
